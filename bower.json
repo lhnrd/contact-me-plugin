@@ -1,0 +1,20 @@
+{
+  "name": "contact-me-jquery-plugin",
+  "version": "0.0.1",
+  "description": "jQuery plugin used to create contact forms based on customized fields.",
+  "keywords": [
+    "jquery-plugin"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.3"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+}
