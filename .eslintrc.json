@@ -2,7 +2,13 @@
   "env": {
     "browser": true,
     "jquery": true,
-    "jasmine": true
+    "jasmine": true,
+    "node": true,
+    "amd": true
   },
-  "extends": "google"
+  "extends": "google",
+  "rules": {
+    "guard-for-in": "off",
+    "no-negated-condition": "off"
+  }
 }
