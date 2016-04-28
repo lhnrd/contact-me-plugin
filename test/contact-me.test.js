@@ -38,7 +38,7 @@ describe('contactMe plugin', function() {
         });
       }).not.toThrow();
 
-      expect($form.find('.contact-me-form').attr('action')).toEqual(endpoint);
+      expect($form.find('.cm-form').attr('action')).toEqual(endpoint);
     });
 
     it('should accept data-endpoint attribute as endpoint', function() {
@@ -50,7 +50,7 @@ describe('contactMe plugin', function() {
         $form.contactMe();
       }).not.toThrow();
 
-      expect($form.find('.contact-me-form').attr('action')).toEqual(endpoint);
+      expect($form.find('.cm-form').attr('action')).toEqual(endpoint);
     });
   });
 
@@ -66,8 +66,8 @@ describe('contactMe plugin', function() {
       this.$form = null;
     });
 
-    it('should create a form.contact-me-form element', function() {
-      expect(this.$form.find('.contact-me-form').length).toBeGreaterThan(0);
+    it('should create a form.cm-form element', function() {
+      expect(this.$form.find('.cm-form').length).toBeGreaterThan(0);
     });
 
     it('should create elements from the "fields" option', function() {
@@ -124,6 +124,8 @@ describe('contactMe plugin', function() {
             function(data) {
               $.get(options.endpoint, {id: data.id}, function(data) {
                 delete data.id;
+                user.token = options.token;
+                user.secret = options.secret;
                 expect(user).toEqual(data);
                 done();
               });
