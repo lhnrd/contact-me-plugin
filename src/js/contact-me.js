@@ -27,26 +27,103 @@
 })(function($) {
   'use strict';
 
-  function createContainer(title) {
-    return $([
-      '<div class="container-fluid">',
-      '<div class="panel panel-default">',
-      '<div class="panel-heading">',
-      '<div class="panel-title"><h3>' + title + '</h3></div>',
-      '</div>',
-      '<div class="panel-body"></div>',
-      '</div>',
-      '</div>'
-    ].join(''));
+  $.fn.contactMe = function(opts) {
+    var options = $.extend(true, {
+      fields: {
+        name: true,
+        email: true
+      }
+    }, opts);
+    var id = 1;
+
+    return this.each(function() {
+      options.endpoint = options.endpoint || this.dataset.endpoint;
+      options.modal = false;
+
+      if (!options.endpoint) {
+        throw new ReferenceError(
+          'You have to define an endpoint for the form.'
+        );
+      }
+
+      var $element = $(this);
+
+      if ($element.is('a')) {
+        options.modal = true;
+      }
+
+      var $form = createForm(options).attr({
+        id: 'contact-me-' + id,
+        name: 'contact-me-' + id
+      });
+
+      id++;
+
+      if (options.modal) {
+        $(document.body).append($form);
+        $element.on('click', openModal);
+      } else {
+        $element.html($form);
+      }
+
+      $element.data('form', $form);
+    });
+  };
+
+  /**
+   * click event handler used by the element <a> in which contactMe() function was
+   * called. This function gets the $form modal wrapper and makes it visible with
+   * the css state class 'is-open'.
+   * @param  {object} evt Mouse event
+   */
+  function openModal(evt) {
+    evt.preventDefault();
+
+    var $form = $(this).data('form');
+    $form.addClass('is-open');
   }
 
-  function createForm(endpoint, fields) {
-    var $form = $('<form class="contact-me-form">');
+  /**
+   * click event handler used by the elements inside the modal wrapper which
+   * contain the class .js-model.close. This function remove the css 'is-open'
+   * state class and hides the modal.
+   * @param  {object} evt Mouse click event
+   */
+  function closeModal(evt) {
+    evt.preventDefault();
+    $(this).removeClass('is-open');
+  }
 
-    $form.attr({
+  /**
+   * If the element used to initialize the contactMe plugin is an <a> element
+   * the form will be wrapped with a modal plus overlay elements. This function
+   * creates and return the modal wrapper and also binds events to it.
+   * @return {object} jQuery object containing the modal structure.
+   */
+  function createModal() {
+    var $modal = $('<div class="cm-modal">');
+    $modal.append($('<div class="js-close-modal cm-overlay">'));
+    $modal.on('click', '.js-close-modal', closeModal.bind($modal));
+    return $modal;
+  }
+
+  /**
+   * Function used to create the whole form which will be used. It calls another
+   * helper function to create all form fields and buttons.
+   * @param  {object} options Object containing all defaults and user chosen options.
+   * @return {object}         jQuery object containing all the form structure.
+   */
+  function createForm(options) {
+    var endpoint = options.endpoint;
+    var fields = options.fields;
+    var $form = $('<form>').attr({
+      class: 'cm-form',
       action: endpoint,
       method: 'POST'
     });
+
+    $form.append(createHidden('token', options.token));
+    $form.append(createHidden('secret', options.secret));
 
     for (var field in fields) {
       var value = fields[field];
@@ -57,20 +134,41 @@
       }
     }
 
-    $form.append(
-      $('<button type="submit" class="btn btn-primary">').html('Submit')
-    );
+    $form.append(createButton(options.modal));
+
+    if (options.modal) {
+      $form.addClass('cm-form--modal');
+      $form = createModal().append($form);
+    }
 
     return $form;
   }
 
+  function createHidden(name, value) {
+    return $('<input>')
+      .attr({
+        type: 'hidden',
+        name: name,
+        value: value
+      });
+  }
+
+  /**
+   * Create a HTML input. Sets the attribute name and type of the input based on
+   * the parameter 'name'. Depending on which name its used for the input, the
+   * element will receive a differente type of input.
+   * @param  {string} name     Name of the input
+   * @param  {boolean} required Field is required
+   * @return {object}          The jQuery object containing the input
+   */
   function createInput(name, required) {
-    var $group = $('<div class="form-group">');
-    $group.append($('<label>').attr('for', name).html(name.toUpperCase()));
-    $group.append(
-      $('<input class="form-control">')
+    var $wrapper = $('<div class="cm-form__field">');
+    var $label = $('<label>').html(name.toUpperCase());
+    $label.append(
+      $('<input>')
         .attr({
           id: name,
+          class: 'cm-form__input cm-form__' + name + ' u-full-width',
           type: (name === 'email') ? 'email' :
             (name === 'password') ? 'password' : 'text',
           placeholder: 'Enter your ' + name,
@@ -78,49 +176,52 @@
           name: name
         })
     );
-    return $group;
+    return $wrapper.append($label);
   }
 
   function createSelect(name, values) {
-    var $group = $('<div class="form-group">');
-    $group.append($('<label>').attr('for', name).html(name.toUpperCase()));
+    var $wrapper = $('<div class="cm-form__field">');
+    var $label = $('<label>').html(name.toUpperCase());
 
-    var $select = $('<select class="form-control">').attr('name', name);
+    var $select = $('<select>')
+      .attr({
+        id: name,
+        class: 'cm-form__input cm-form__' + name + ' u-full-width',
+        name: name
+      });
 
     for (var i in values) {
       var value = values[i];
       $select.append($('<option>').val(value.toLowerCase()).html(value));
     }
 
-    return $group.append($select);
+    $label.append($select);
+    return $wrapper.append($label);
   }
 
-  $.fn.contactMe = function(options) {
-    var defaults = {
-      title: 'Contact Me Form',
-      fields: {
-        name: true,
-        email: true
-      }
-    };
+  function createButton(isModal) {
+    var $wrapper = $('<div class="cm-form__field">');
 
-    $.extend(true, defaults, options);
+    $wrapper.append(
+      $('<button>')
+        .attr({
+          type: 'submit',
+          class: 'cm-form__button button-primary'
+        })
+        .html('Submit')
+    );
 
-    return this.each(function() {
-      var endpoint = defaults.endpoint || this.dataset.endpoint;
-
-      if (!endpoint) {
-        throw new ReferenceError(
-          'You have to define an endpoint for the form.'
-        );
-      }
-
-      var $container = createContainer(defaults.title);
-      $container.find('.panel-body').append(
-        createForm(endpoint, defaults.fields)
+    if (isModal) {
+      $wrapper.append(
+        $('<button>')
+        .attr({
+          type: 'button',
+          class: 'js-close-modal cm-form__button'
+        })
+        .html('Close')
       );
+    }
 
-      $(this).html($container);
-    });
-  };
+    return $wrapper;
+  }
 });
