@@ -8,7 +8,7 @@ describe('contactMe plugin', function() {
       state: ['PR', 'SC', 'SP', 'RS'],
       level: ['Iniciante', 'Intermediário', 'Avançado', 'Ninja']
     },
-    endpoint: '/users'
+    endpoint: '/api/users'
   };
 
   describe('execution', function() {
@@ -29,7 +29,7 @@ describe('contactMe plugin', function() {
     });
 
     it('should accept endpoint option as endpoint', function() {
-      var endpoint = '/users';
+      var endpoint = '/api/users';
       var $form = this.$form;
 
       expect(function() {
@@ -42,7 +42,7 @@ describe('contactMe plugin', function() {
     });
 
     it('should accept data-endpoint attribute as endpoint', function() {
-      var endpoint = '/users';
+      var endpoint = '/api/users';
 
       this.$form[0].dataset.endpoint = endpoint;
       expect(this.$form.contactMe()).not.toThrow();
