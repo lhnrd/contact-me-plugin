@@ -32,6 +32,7 @@
     "gulp-uglify": "^1.5.3",
     "json-mock": "^0.1.0",
     "postcss-csso": "^1.1.1",
+    "proxy-middleware": "^0.15.0",
     "wiredep": "^4.0.0"
   }
 }
