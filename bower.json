@@ -6,14 +6,14 @@
     "jquery-plugin"
   ],
   "dependencies": {
-    "bootstrap": "^3.3.6",
+    "skeleton": "^2.0.4",
     "jquery": "^2.2.3"
   },
   "overrides": {
-    "bootstrap": {
+    "skeleton": {
       "main": [
-        "dist/css/bootstrap.css",
-        "dist/js/bootstrap.js"
+        "css/normalize.css",
+        "css/skeleton.css"
       ]
     }
   }
