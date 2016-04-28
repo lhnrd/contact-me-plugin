@@ -98,27 +98,34 @@ describe('contactMe plugin', function() {
       this.$form = null;
     });
 
-    it('should submit data to the endpoint when .submit button is clicked',
+    it('should submit data to the endpoint when submit button is clicked',
       function(done) {
         var user = {
           name: 'Lucas',
           email: 'rinaldi.lcs@email.com',
-          state: 'sc'
+          state: 'sc',
+          level: 'ninja'
         };
+        var $form = this.$form;
 
-        this.$form.fillMe(user);
-        this.$form.find('form').on('submit', function(e) {
+        if ($form.find('[type=submit]').length === 0) {
+          done();
+        }
+
+        $form.fillMe(user);
+        $form.find('form').on('submit', function(e) {
           e.preventDefault();
 
-          $.post('/users', this.$form.find('form').serialize(), function(data) {
-            $.get('/users', {id: data.id}, function(data) {
-              expect(user).toEqual(data);
-              done();
+          $.post(options.endpoint, $form.find('form').serialize(),
+            function(data) {
+              $.get(options.endpoint, {id: data.id}, function(data) {
+                delete data.id;
+                expect(user).toEqual(data);
+                done();
+              });
             });
-          });
         });
+        $form.find('[type=submit]').click();
       });
-
-    it('should validate fields when submitting data', function() {});
   });
 });
