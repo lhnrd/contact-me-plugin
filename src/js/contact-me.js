@@ -27,15 +27,84 @@
 })(function($) {
   'use strict';
 
+  function createContainer(title) {
+    return $([
+      '<div class="container-fluid">',
+      '<div class="panel panel-default">',
+      '<div class="panel-heading">',
+      '<div class="panel-title"><h3>' + title + '</h3></div>',
+      '</div>',
+      '<div class="panel-body"></div>',
+      '</div>',
+      '</div>'
+    ].join(''));
+  }
+
+  function createForm(endpoint, fields) {
+    var $form = $('<form class="contact-me-form">');
+
+    $form.attr({
+      action: endpoint,
+      method: 'POST'
+    });
+
+    for (var field in fields) {
+      var value = fields[field];
+      if (typeof value === 'boolean') {
+        $form.append(createInput(field, value));
+      } else if (value.length) {
+        $form.append(createSelect(field, value));
+      }
+    }
+
+    $form.append(
+      $('<button type="submit" class="btn btn-primary">').html('Submit')
+    );
+
+    return $form;
+  }
+
+  function createInput(name, required) {
+    var $group = $('<div class="form-group">');
+    $group.append($('<label>').attr('for', name).html(name.toUpperCase()));
+    $group.append(
+      $('<input class="form-control">')
+        .attr({
+          id: name,
+          type: (name === 'email') ? 'email' :
+            (name === 'password') ? 'password' : 'text',
+          placeholder: 'Enter your ' + name,
+          required: required,
+          name: name
+        })
+    );
+    return $group;
+  }
+
+  function createSelect(name, values) {
+    var $group = $('<div class="form-group">');
+    $group.append($('<label>').attr('for', name).html(name.toUpperCase()));
+
+    var $select = $('<select class="form-control">').attr('name', name);
+
+    for (var i in values) {
+      var value = values[i];
+      $select.append($('<option>').val(value.toLowerCase()).html(value));
+    }
+
+    return $group.append($select);
+  }
+
   $.fn.contactMe = function(options) {
     var defaults = {
+      title: 'Contact Me Form',
       fields: {
         name: true,
         email: true
       }
     };
 
-    $.extend(defaults, options);
+    $.extend(true, defaults, options);
 
     return this.each(function() {
       var endpoint = defaults.endpoint || this.dataset.endpoint;
@@ -45,6 +114,13 @@
           'You have to define an endpoint for the form.'
         );
       }
+
+      var $container = createContainer(defaults.title);
+      $container.find('.panel-body').append(
+        createForm(endpoint, defaults.fields)
+      );
+
+      $(this).html($container);
     });
   };
 });
