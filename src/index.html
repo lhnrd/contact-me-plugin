@@ -4,28 +4,51 @@
   <meta charset="UTF-8">
   <title>Contact Me Demo</title>
   <!-- bower:css -->
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="../lib/skeleton/css/normalize.css" />
+  <link rel="stylesheet" href="../lib/skeleton/css/skeleton.css" />
   <!-- endbower -->
   <link rel="stylesheet" href="css/contact-me.css" media="screen" title="no title" charset="utf-8">
+
+  <style media="screen">
+    .container {
+      margin-top: 100px;
+    }
+    .showcase {
+      position: relative;
+      float: left;
+      box-sizing: border-box;
+      margin: 2%;
+      width: 46%;
+      height: 500px;
+      border: 1px dashed black;
+      text-align: center;
+    }
+    .showcase a {
+      position: relative;
+      top: calc(50% - 19px);
+    }
+  </style>
 </head>
 <body>
-  <div class="contact-me-container">
-    <a href="#" class="contact-me"></a>
+  <div class="container">
+    <div class="showcase contact-me">
+    </div>
+    <div class="showcase">
+      <a href="#" class="contact-me button button-primary">Open Modal</a>
+    </div>
   </div>
-  <div class="contact-me-container">
-    <div class="contact-me" data-endpoint="/api/users"></div>
-  </div>
-
   <!-- bower:js -->
   <script src="../lib/jquery/dist/jquery.js"></script>
-  <script src="../lib/bootstrap/dist/js/bootstrap.js"></script>
   <!-- endbower -->
   <script src="js/contact-me.js" charset="utf-8"></script>
   <script type="text/javascript">
     $('.contact-me').contactMe({
       endpoint: '/api/users',
+      token: '62bb61431348e22850828a5829c4373faafe29c1',
+      secret: '51a266c2844ccd5cac83d88de88d82d05358aa51',
       fields: {
         email: false,
+        password: true,
         state: ['PR', 'SC', 'SP', 'RS'],
         level: ['Iniciante', 'Intermediário', 'Avançado', 'Ninja']
       }
