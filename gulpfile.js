@@ -27,10 +27,11 @@ gulp.task('lint', function() {
     .pipe(p.eslint.format());
 });
 
-gulp.task('test', function() {
+gulp.task('mock', function() {
   var api = mock.create();
   api.use(mock.router('test/db.json'));
   api.listen(3005);
+});
 
   bsTest = bs.create('Server test');
   bsTest.init({
