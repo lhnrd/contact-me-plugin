@@ -38,15 +38,19 @@ describe('contactMe plugin', function() {
         });
       }).not.toThrow();
 
-      expect($form.find('#contact-me').attr('action')).toEqual(endpoint);
+      expect($form.find('.contact-me-form').attr('action')).toEqual(endpoint);
     });
 
     it('should accept data-endpoint attribute as endpoint', function() {
       var endpoint = '/api/users';
+      var $form = this.$form;
 
-      this.$form[0].dataset.endpoint = endpoint;
-      expect(this.$form.contactMe()).not.toThrow();
-      expect(this.$form.find('#contact-me').attr('action')).toEqual(endpoint);
+      expect(function() {
+        $form[0].dataset.endpoint = endpoint;
+        $form.contactMe();
+      }).not.toThrow();
+
+      expect($form.find('.contact-me-form').attr('action')).toEqual(endpoint);
     });
   });
 
@@ -62,19 +66,19 @@ describe('contactMe plugin', function() {
       this.$form = null;
     });
 
-    it('should create a form#contact-me element', function() {
-      expect(this.$form.find('#contact-me').length).toBeGreatherThan(0);
+    it('should create a form.contact-me-form element', function() {
+      expect(this.$form.find('.contact-me-form').length).toBeGreaterThan(0);
     });
 
     it('should create elements from the "fields" option', function() {
       for (var field in options.fields) {
         expect(this.$form.find('[name=' + field + ']').length)
-          .toBeGreatherThan(0);
+          .toBeGreaterThan(0);
       }
     });
 
-    it('should create a submit (.submit class) button', function() {
-      expect(this.$form.find('button[type=submit]').length).toBeGreatherThan(0);
+    it('should create a submit button', function() {
+      expect(this.$form.find('button[type=submit]').length).toBeGreaterThan(0);
     });
   });
 
