@@ -5,6 +5,8 @@ var autoprefixer = require('autoprefixer');
 var csso = require('postcss-csso');
 var bs = require('browser-sync');
 var mock = require('json-mock');
+var proxy = require('proxy-middleware');
+var url = require('url');
 
 var path = {
   html: ['src/**/*.html'],
@@ -33,18 +35,23 @@ gulp.task('mock', function() {
   api.listen(3005);
 });
 
+gulp.task('test', ['mock'], function() {
+  var proxyopts = url.parse('http://localhost:3005');
+  proxyopts.route = '/api';
+
   bsTest = bs.create('Server test');
   bsTest.init({
     ui: {port: 3003},
+    port: 3002,
     server: {
       baseDir: ['test'],
+      middleware: [proxy(proxyopts)],
       index: 'SpecRunner.html',
       routes: {
         '/lib': 'lib',
         '/src': 'src/js'
       }
-    },
-    port: 3002
+    }
   });
 
   gulp.watch(path.test.concat(path.script)).on('change', bsTest.reload);
@@ -95,12 +102,16 @@ gulp.task('watch', function() {
 });
 
 gulp.task('serve', ['inject-bower'], function() {
+  var proxyopts = url.parse('http://localhost:3005');
+  proxyopts.route = '/api';
+
   bsServer = bs.create('Server');
   bsServer.init({
     ui: {port: 3001},
     server: {
       baseDir: ['src'],
       index: 'index.html',
+      middleware: [proxy(proxyopts)],
       routes: {
         '/lib': 'lib'
       }
