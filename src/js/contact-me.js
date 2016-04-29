@@ -32,7 +32,8 @@
       fields: {
         name: true,
         email: true
-      }
+      },
+      onSubmit: onSubmit
     }, opts);
     var id = 1;
 
@@ -223,6 +224,10 @@
         .html('Submit')
     );
 
+    $wrapper.append(
+      $('<button type="reset">').css('display', 'none')
+    );
+
     if (isModal) {
       $wrapper.append(
         $('<button>')
@@ -235,5 +240,24 @@
     }
 
     return $wrapper;
+  }
+
+  function onSubmit(evt) {
+    evt.preventDefault();
+
+    var $form = $(this);
+    var endpoint = $form.attr('action');
+
+    $.post(endpoint, $form.serialize())
+      .done(function(data, status) {
+        $form.flashMessage(status,
+          'Successfully inserted: ' + data.name
+        );
+        $form.find('[type=reset]').trigger('click');
+      })
+      .fail(function(jqxhr, status, msg) {
+        $form.flashMessage(status, msg);
+        $form.find(':invalid').focus();
+      });
   }
 });
