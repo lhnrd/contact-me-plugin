@@ -31,6 +31,32 @@
 }
 .cm-modal { display: none; }
 .is-open { display: block; }
+.cm-form__message {
+  padding: 15px;
+  margin-bottom: 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  position: absolute;
+  width: 300px;
+  height: 80px;
+  top: calc(40%);
+  left: calc(50% - 150px);
+  text-align: center;
+  box-sizing: border-box;
+   display: none; 
+}
+.cm-form__message--success {
+  display: block;
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+.cm-form__message--error {
+  display: block;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
 .cm-form__field:nth-of-type(2n + 1) { margin-left: 0; }
 .cm-form__field:last-of-type {
   position: absolute;

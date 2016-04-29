@@ -70,6 +70,18 @@
     });
   };
 
+  $.fn.flashMessage = function(status, msg) {
+    var type = 'cm-form__message--' + status;
+    var $message = $(this).find('.cm-form__message');
+
+    $message.text(msg).addClass(type);
+    setTimeout(function() {
+      $message.removeClass(type);
+    }, 5000);
+
+    return this;
+  };
+
   /**
    * click event handler used by the element <a> in which contactMe() function was
    * called. This function gets the $form modal wrapper and makes it visible with
