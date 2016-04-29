@@ -1,33 +1,52 @@
+# Contact Me jQuery Plugin
+
+jQuery plugin that creates a simple form based on user entered fields.
+
+### Getting started
+
+- [Download the zip](https://github.com/lcsrinaldi/contact-me-plugin/archive/v0.0.1.zip) and include in your .html page.
+
 ### Dependencies
 
-- [jquery](https://github.com/jquery/jquery) (1.7 and greater)
-- [sifter](https://github.com/brianreavis/sifter.js) (bundled in ["standalone" build](dist/js/standalone))
-- [microplugin](https://github.com/brianreavis/microplugin.js) (bundled in ["standalone" build](dist/js/standalone))
+- [jquery](https://github.com/jquery/jquery)
+- [skeleton](https://github.com/dhg/Skeleton)
 
 ### Files
 
-All pre-built files needed to use Selectize can be found in the ["dist"](dist/) folder.
+All pre-built files needed to use ContactMe can be found in the ["dist"](dist/) folder.
 
 - [**js/**](dist/js)
-	- [**standalone/**](dist/js/standalone)
-		- [selectize.js](dist/js/standalone/selectize.js) — With dependencies, minus jquery
-	- [selectize.js](dist/js/selectize.js) — Without dependencies
-- [**less/**](dist/less)
-	- [selectize.less](dist/less/selectize.less) — Core styles
-	- [selectize.default.less](dist/less/selectize.default.less) — Default theme
-	- [selectize.bootstrap2.less](dist/less/selectize.bootstrap2.less) — Bootstrap 2 theme
-	- [selectize.bootstrap3.less](dist/less/selectize.bootstrap3.less) — Bootstrap 3 theme
-	- [**plugins/**](dist/less/plugins) — Individual plugin styles
-- [**css/**](dist/css)
-	- [selectize.css](dist/css/selectize.css) — Core styles
-	- [selectize.default.css](dist/css/selectize.default.css) — Default theme (with core styles)
-	- [selectize.bootstrap2.css](dist/css/selectize.bootstrap2.css) - Bootstrap 2 theme
-	- [selectize.bootstrap3.css](dist/css/selectize.bootstrap3.css) - Bootstrap 3 theme
+	- [contact-me.js](dist/js/contact-me.js) — Without dependencies
+	- [contact-me.standalone.js](dist/js/contact-me.js) — With dependencies
+- [**css/**](dist/less)
+  - [contact-me.css](dist/css/contact-me.css) — Without dependencies
+	- [contact-me.standalone.css](dist/css/contact-me.standalone.css) — With skeleton and normalize.css
 
 ### Usage
 
 ```js
-$('select').selectize(options);
+$('.contact-me').contactMe(options);
 ```
 
-The available options are [documented here](docs/usage.md).
+The element `.contact-me` must be a `block` element or an `<a>` tag.
+
+#### Options
+
+Option|Description
+---|---
+`token` and `secret`| Token and secret numbers to validate the request.
+`fields`| Key-value hash that uses the key as a form field (`email`, `password` generate specific input type). Value can be `true` or `false` to indicate obligatory field; and also an array to generate a `select` element.
+`onSubmit`| Function that is called when the user press the *Submit* button. `this` object refers to the form in question.
+
+### Development
+
+- Clone the repo: `git clone https://github.com/lcsrinaldi/contact-me-plugin` (Note: this is under active development, so if you're looking for stable and safe, use the zipped download)
+- `npm install && bower install`. Make sure you have both installed on your computer.
+
+#### Gulpfile
+
+- `gulp mock` creates a mock server on port `3005` to test and use the plugin.
+- `gulp test` serves a page with automated test scripts included on port `3002`.
+- `gulp serve` serves a page with two plugins test cases on port `3000`.
+- `gulp build` create the distribution files on the `dist/` folder.
+- `gulp` executes `server` and `test` altogether.
