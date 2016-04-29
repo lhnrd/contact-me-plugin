@@ -29,13 +29,13 @@
 
   $.fn.contactMe = function(opts) {
     var options = $.extend(true, {
+      id: 1,
       fields: {
         name: true,
         email: true
       },
       onSubmit: onSubmit
     }, opts);
-    var id = 1;
 
     return this.each(function() {
       options.endpoint = options.endpoint || this.dataset.endpoint;
@@ -48,25 +48,26 @@
       }
 
       var $element = $(this);
+      var $form;
+      var $modal;
 
       if ($element.is('a')) {
         options.modal = true;
-      }
 
-      var $form = createForm(options).attr({
-        id: 'contact-me-' + id,
-        name: 'contact-me-' + id
-      });
+        $modal = createModalForm(options);
+        $form = $modal.find('.cm-form');
 
-      id++;
-
-      if (options.modal) {
-        $(document.body).append($form);
+        $(document.body).append($modal);
         $element.on('click', openModal);
       } else {
+        $modal = null;
+        $form = createForm(options);
         $element.html($form);
       }
 
+      options.id++;
+
+      $element.data('modal', $modal);
       $element.data('form', $form);
     });
   };
@@ -92,8 +93,8 @@
   function openModal(evt) {
     evt.preventDefault();
 
-    var $form = $(this).data('form');
-    $form.addClass('is-open');
+    var $modal = $(this).data('modal');
+    $modal.addClass('is-open');
   }
 
   /**
@@ -111,11 +112,13 @@
    * If the element used to initialize the contactMe plugin is an <a> element
    * the form will be wrapped with a modal plus overlay elements. This function
    * creates and return the modal wrapper and also binds events to it.
-   * @return {object} jQuery object containing the modal structure.
+   * @param  {object} options Defaults and options set by the user
+   * @return {object}         jQuery object containing the modal structure.
    */
-  function createModal() {
+  function createModalForm(options) {
     var $modal = $('<div class="cm-modal">');
     $modal.append($('<div class="js-close-modal cm-overlay">'));
+    $modal.append(createForm(options).addClass('cm-form--modal'));
     $modal.on('click', '.js-close-modal', closeModal.bind($modal));
     return $modal;
   }
@@ -130,13 +133,16 @@
     var endpoint = options.endpoint;
     var fields = options.fields;
     var $form = $('<form>').attr({
+      id: 'contact-me-' + options.id || options.name,
+      name: 'contact-me-' + options.id || options.name,
       class: 'cm-form',
       action: endpoint,
       method: 'POST'
     });
 
-    $form.append(createHidden('token', options.token));
-    $form.append(createHidden('secret', options.secret));
+    $form.append($('<div class="cm-form__message">'));
+    $form.append(createHiddenInput('token', options.token));
+    $form.append(createHiddenInput('secret', options.secret));
 
     for (var field in fields) {
       var value = fields[field];
@@ -149,15 +155,12 @@
 
     $form.append(createButton(options.modal));
 
-    if (options.modal) {
-      $form.addClass('cm-form--modal');
-      $form = createModal().append($form);
-    }
+    $form.on('submit', options.onSubmit);
 
     return $form;
   }
 
-  function createHidden(name, value) {
+  function createHiddenInput(name, value) {
     return $('<input>')
       .attr({
         type: 'hidden',
@@ -180,7 +183,6 @@
     $label.append(
       $('<input>')
         .attr({
-          id: name,
           class: 'cm-form__input cm-form__' + name + ' u-full-width',
           type: (name === 'email') ? 'email' :
             (name === 'password') ? 'password' : 'text',
