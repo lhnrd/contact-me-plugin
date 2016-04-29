@@ -63,7 +63,7 @@ gulp.task('inject-bower', function() {
     .pipe(gulp.dest('src'));
 });
 
-gulp.task('build', function() {
+gulp.task('build', ['clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
     csso
