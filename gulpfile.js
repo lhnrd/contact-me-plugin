@@ -101,7 +101,7 @@ gulp.task('watch', function() {
   gulp.watch(path.html).on('change', bsServer.reload);
 });
 
-gulp.task('serve', ['inject-bower'], function() {
+gulp.task('serve', ['inject-bower', 'mock'], function() {
   var proxyopts = url.parse('http://localhost:3005');
   proxyopts.route = '/api';
 
