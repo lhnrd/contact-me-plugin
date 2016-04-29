@@ -64,34 +64,31 @@ gulp.task('inject-bower', function() {
 });
 
 gulp.task('build', function() {
+  var processors = [
+    autoprefixer({browsers: ['last 1 version']}),
+    csso
+  ];
+
   // build standalone plugin
   gulp.src(path.script)
-    .pipe(p.rename({suffix: '.standalone'}))
     .pipe(p.uglify())
     .pipe(gulp.dest(path.output));
 
   // build plugin with all its dependencies
   gulp.src(wiredep().js.concat(path.script))
-    .pipe(p.concat('js/contact-me.js'))
+    .pipe(p.concat('js/contact-me.standalone.js'))
     .pipe(p.uglify())
     .pipe(gulp.dest(path.output));
 
   // build standalone style
   gulp.src(path.style)
-    .pipe(p.rename({suffix: '.standalone'}))
-    .pipe(p.postcss([
-      autoprefixer({browsers: ['last 1 version']}),
-      csso
-    ]))
+    .pipe(p.postcss(processors))
     .pipe(gulp.dest(path.output));
 
   // build style with all its dependencies
   gulp.src(wiredep().css.concat(path.style))
-    .pipe(p.concat('css/contact-me.css'))
-    .pipe(p.postcss([
-      autoprefixer({browsers: ['last 1 version']}),
-      csso
-    ]))
+    .pipe(p.concat('css/contact-me.standalone.css'))
+    .pipe(p.postcss(processors))
     .pipe(gulp.dest(path.output));
 });
 
